@@ -19,6 +19,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers();
+builder.Services.AddHostedService<WebApplication1.Services.ProcessBackgroundService>();
 var app = builder.Build();
 
 app.UseRouting();
@@ -32,23 +33,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
-
-app.MapGet("/GetAllProcesses", () =>
-    {
-        Process[] processes = Process.GetProcesses();
-        List<Dictionary<string, string>> namesAndIds = new(); 
-        foreach (var process in processes)
-        {
-            Dictionary<string, string> nameAndId = new Dictionary<string, string>();
-            nameAndId.Add("name", process.ProcessName);
-            nameAndId.Add("id", process.Id.ToString());
-            namesAndIds.Add(nameAndId);
-        }
-
-        return namesAndIds;
-    })
-    .WithName("GetWeatherForecast");
-
 app.MapHub<ProcessHub>("/processhub");
 
 app.Run();
